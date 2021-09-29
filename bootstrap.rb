@@ -40,7 +40,7 @@ if ENV['GITHUB_ACTIONS']
   base_ref = ENV['GITHUB_BASE_REF'] || ENV['GITHUB_REF']
   head_ref = ENV['GITHUB_HEAD_REF'] || ENV['GITHUB_REF']
 
-  if ENV['GITHUB_REF'] =~ %r{^refs/(?:heads|tags)/v(.*)}
+  if base_ref =~ %r{^(?:refs/(?:heads|tags))?/v(.*)}
     options[:version] = $1
   end
 
@@ -76,7 +76,8 @@ inside __dir__ do
       inside name do
         `git remote set-url origin #{repo}`
         `git fetch origin`
-        `git checkout -B #{branch} origin/#{branch}`
+        `git checkout -B master origin/master`
+        `git checkout -B #{branch} origin/#{branch}` if branch != 'master'
       end
     else
       FileUtils.rm_rf(name) rescue nil
@@ -85,7 +86,8 @@ inside __dir__ do
         `git clone #{repo} #{File.basename(name)}`
         inside File.basename(name) do
           `git fetch origin`
-          `git checkout -B #{branch} origin/#{branch}`
+          `git checkout -B master origin/master`
+          `git checkout -B #{branch} origin/#{branch}` if branch != 'master'
 
           if cfg[:ref]
             `git checkout #{cfg[:ref]}`
