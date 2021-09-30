@@ -42,7 +42,7 @@ if ENV['GITHUB_ACTIONS']
   head_ref = ENV['GITHUB_HEAD_REF']
   head_ref = ENV['GITHUB_REF'] if [nil, ''].include? head_ref
 
-  if base_ref =~ %r{^(?:refs/(?:heads|tags)/)?v(.*)}
+  if base_ref =~ %r{^(?:refs/(?:heads|tags)/)?v([0-9]+\.[0-9]+)}
     options[:version] = $1
   end
 
