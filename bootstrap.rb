@@ -37,10 +37,12 @@ repos = {
 
 if ENV['GITHUB_ACTIONS']
   repo = ENV['GITHUB_REPOSITORY']
-  base_ref = ENV['GITHUB_BASE_REF'] || ENV['GITHUB_REF']
-  head_ref = ENV['GITHUB_HEAD_REF'] || ENV['GITHUB_REF']
+  base_ref = ENV['GITHUB_BASE_REF']
+  base_ref = ENV['GITHUB_REF'] if [nil, ''].include? base_ref
+  head_ref = ENV['GITHUB_HEAD_REF']
+  head_ref = ENV['GITHUB_REF'] if [nil, ''].include? head_ref
 
-  if base_ref =~ %r{^(?:refs/(?:heads|tags))?/v(.*)}
+  if base_ref =~ %r{^(?:refs/(?:heads|tags)/)?v(.*)}
     options[:version] = $1
   end
 
@@ -78,6 +80,10 @@ inside __dir__ do
         `git fetch origin`
         `git checkout -B master origin/master`
         `git checkout -B #{branch} origin/#{branch}` if branch != 'master'
+
+        if cfg[:ref]
+          `git checkout #{cfg[:ref]}`
+        end
       end
     else
       FileUtils.rm_rf(name) rescue nil
