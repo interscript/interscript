@@ -26,7 +26,7 @@ options[:upstream] = nil if options[:upstream] == ''
 options[:upstream] ||= 'https://github.com/interscript'
 
 repos = {
-  'ruby': {repo: "#{options[:upstream]}/interscript.git"},
+  'ruby': {repo: "#{options[:upstream]}/interscript-ruby.git"},
   'js': {repo: "#{options[:upstream]}/interscript-js.git"},
 
   'maps': {repo: "#{options[:upstream]}/maps.git"},
