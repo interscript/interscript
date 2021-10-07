@@ -8,7 +8,7 @@ OptionParser.new do |opts|
 
   opts.on("-v", "--version [ver]", "Get a set compatible with a version (eg. 2.4)") do |v|
     options[:version] = v
-  end  
+  end
 
   opts.on("-u", "--upstream [url]", "Fetch packages from a different upstream") do |v|
     options[:upstream] = v
@@ -67,8 +67,8 @@ inside __dir__ do
   repos.each do |name, cfg|
     name = name.to_s
     repo = cfg[:repo]
-    branch = options[:version] ? "v#{options[:version]}" : "master"
-    branch = "master" if cfg[:versioned] == false
+    branch = options[:version] ? "v#{options[:version]}" : "main"
+    branch = "main" if cfg[:versioned] == false
     branch = cfg[:branch] if cfg[:branch]
 
     next if options[:only] && name !~ options[:only]
@@ -78,8 +78,8 @@ inside __dir__ do
       inside name do
         `git remote set-url origin #{repo}`
         `git fetch origin`
-        `git checkout -B master origin/master`
-        `git checkout -B #{branch} origin/#{branch}` if branch != 'master'
+        `git checkout -B main origin/main`
+        `git checkout -B #{branch} origin/#{branch}` if branch != 'main'
 
         if cfg[:ref]
           `git checkout #{cfg[:ref]}`
@@ -92,8 +92,8 @@ inside __dir__ do
         `git clone #{repo} #{File.basename(name)}`
         inside File.basename(name) do
           `git fetch origin`
-          `git checkout -B master origin/master`
-          `git checkout -B #{branch} origin/#{branch}` if branch != 'master'
+          `git checkout -B main origin/main`
+          `git checkout -B #{branch} origin/#{branch}` if branch != 'main'
 
           if cfg[:ref]
             `git checkout #{cfg[:ref]}`
