@@ -1,7 +1,7 @@
 = Interscript: Interoperable Script Conversion Systems, with Ruby and JavaScript runtimes
 
-image:https://github.com/interscript/interscript/workflows/test/badge.svg["Ruby build status", link="https://github.com/interscript/interscript/actions?workflow=test"]
-image:https://github.com/interscript/interscript/workflows/js/badge.svg["JavaScript build status", link="https://github.com/interscript/interscript/actions?workflow=js"]
+image:https://github.com/interscript/interscript-ruby/workflows/test/badge.svg["Ruby build status", link="https://github.com/interscript/interscript-ruby/actions?workflow=test"]
+image:https://github.com/interscript/interscript-ruby/workflows/js/badge.svg["JavaScript build status", link="https://github.com/interscript/interscript-ruby/actions?workflow=js"]
 
 == Introduction
 
@@ -157,7 +157,7 @@ Currently the schemes cover Cyrillic, Armenian, Greek, Arabic and Hebrew.
 == References
 
 Reference documents are located at the
-https://github.com/interscript/interscript-references[interscript-references repository].
+https://github.com/interscript/interscript-ruby-references[interscript-references repository].
 Some specifications that have distribution limitations may not be reproduced there.
 
 
