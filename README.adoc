@@ -27,7 +27,7 @@ These transliteration systems are used in the demo:
 `icao-rus-Cyrl-Latn-9303`::    ICAO MRZ Romanization of Russian
 `bas-rus-Cyrl-Latn-2017-bss`::      Bulgaria Academy of Science Streamlined System for Russian
 
-image:docs/demo/20191118-interscript-demo-cast.gif["interscript screencast"]
+image:https://raw.githubusercontent.com/interscript/interscript-ruby/main/docs/demo/20191118-interscript-demo-cast.gif["interscript screencast"]
 
 
 == Installation
