@@ -19,13 +19,64 @@ The goal is to achieve interoperable transliteration schemes allowing quality co
 
 
 == Demonstration
+=== Installing Interscript
 
-These transliteration systems are used in the demo:
+[source,bash]
+----
+gem install interscript
+----
 
-`bgnpcgn-rus-Cyrl-Latn-1947`:: BGN/PCGN Romanization of Russian
-`iso-rus-Cyrl-Latn-9-1995`::     ISO 9 Romanization of Russian
-`icao-rus-Cyrl-Latn-9303`::    ICAO MRZ Romanization of Russian
-`bas-rus-Cyrl-Latn-2017-bss`::      Bulgaria Academy of Science Streamlined System for Russian
+=== Interscript stats
+
+[source,bash]
+----
+interscript stats | less
+----
+=== Installing Interscript
+
+[source,bash]
+----
+gem install interscript
+----
+
+=== Interscript stats
+
+[source,bash]
+----
+interscript stats | less
+----
+
+=== Transliteration
+
+[source,bash]
+----
+cat ara-Arab.txt
+interscript -s odni-ara-Arab-Latn-2015 ara-Arab.txt -o ara-Arab-out.txt
+cat ara-Arab-out.txt
+----
+
+=== Diacritization
+
+[source,bash]
+----
+# First, we need to install rababa
+gem install rababa
+# Now we can transliterate
+interscript -s "var-ara-Arab-Arab-rababa|odni-ara-Arab-Latn-2015" ara-Arab.txt -o ara-Arab-out-tl.txt
+cat ara-Arab-out-tl.txt
+# Compare this to transliteration without diacritization
+cat ara-Arab-out.txt
+----
+
+=== Reversing
+
+[source,bash]
+----
+cat rus-rev.txt
+interscript -s odni-rus-Latn-Cyrl-2015 rus-rev.txt -o rus.txt
+# Note that Latn and Cyrl are reversed
+cat rus.txt
+----
 
 image:https://raw.githubusercontent.com/interscript/interscript-ruby/main/docs/demo/20191118-interscript-demo-cast.gif["interscript screencast"]
 
