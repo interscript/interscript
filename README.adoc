@@ -19,34 +19,21 @@ The goal is to achieve interoperable transliteration schemes allowing quality co
 
 
 == Demonstration
-=== Installing Interscript
+Installing Interscript
 
 [source,bash]
 ----
 gem install interscript
 ----
 
-=== Interscript stats
-
-[source,bash]
-----
-interscript stats | less
-----
-=== Installing Interscript
-
-[source,bash]
-----
-gem install interscript
-----
-
-=== Interscript stats
+Interscript stats
 
 [source,bash]
 ----
 interscript stats | less
 ----
 
-=== Transliteration
+Transliteration
 
 [source,bash]
 ----
@@ -55,7 +42,7 @@ interscript -s odni-ara-Arab-Latn-2015 ara-Arab.txt -o ara-Arab-out.txt
 cat ara-Arab-out.txt
 ----
 
-=== Diacritization
+Diacritization
 
 [source,bash]
 ----
@@ -68,7 +55,7 @@ cat ara-Arab-out-tl.txt
 cat ara-Arab-out.txt
 ----
 
-=== Reversing
+Reversing
 
 [source,bash]
 ----
