@@ -65,7 +65,7 @@ interscript -s odni-rus-Latn-Cyrl-2015 rus-rev.txt -o rus.txt
 cat rus.txt
 ----
 
-image:https://raw.githubusercontent.com/interscript/interscript-ruby/main/docs/demo/20191118-interscript-demo-cast.gif["interscript screencast"]
+[![asciicast](https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD.svg)](https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD)
 
 
 == Installation
