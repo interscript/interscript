@@ -65,7 +65,7 @@ interscript -s odni-rus-Latn-Cyrl-2015 rus-rev.txt -o rus.txt
 cat rus.txt
 ----
 
-[![asciicast](https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD.svg)](https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD)
+https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD[image:https://asciinema.org/a/CuyJ2cqwsVSgcW5dxNcUiSJVD.svg[asciicast]]
 
 
 == Installation
