@@ -28,6 +28,7 @@ options[:upstream] ||= 'https://github.com/interscript'
 repos = {
   'ruby': {repo: "#{options[:upstream]}/interscript-ruby.git"},
   'js': {repo: "#{options[:upstream]}/interscript-js.git"},
+  'python': {repo: "#{options[:upstream]}/interscript-python.git"},
 
   'maps': {repo: "#{options[:upstream]}/maps.git"},
 
@@ -51,6 +52,8 @@ if ENV['GITHUB_ACTIONS']
     repos[:ruby][:ref] = head_ref
   when 'interscript/interscript-js'
     repos[:js][:ref] = head_ref
+  when 'interscript/interscript-python'
+    repos[:python][:ref] = head_ref
   when 'interscript/maps'
     repos[:maps][:ref] = head_ref
   end
