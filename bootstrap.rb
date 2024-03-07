@@ -47,8 +47,10 @@ if ENV['GITHUB_ACTIONS']
     options[:version] = $1
   end
 
+  head_ref = head_ref.gsub("refs/heads/", "")
+
   case repo
-  when 'interscript/interscript'
+  when 'interscript/interscript-ruby'
     repos[:ruby][:ref] = head_ref
   when 'interscript/interscript-js'
     repos[:js][:ref] = head_ref
