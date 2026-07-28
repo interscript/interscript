@@ -1,0 +1,72 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ruby:
+    name: Ruby ${{ matrix.ruby }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["3.3", "3.4"]
+    env:
+      BUNDLE_WITHOUT: "secryst"
+      SKIP_JS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - name: Bootstrap packages
+        run: ruby bootstrap.rb
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          working-directory: ruby
+      - name: Install Python helper and gems
+        working-directory: ruby
+        run: |
+          pip install regex
+          bundle install --with=jsexec
+      - name: RSpec
+        working-directory: ruby
+        run: bundle exec rspec
+
+  js:
+    name: Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Bootstrap packages
+        run: ruby bootstrap.rb
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+          working-directory: ruby
+      - name: Install gems
+        working-directory: ruby
+        run: bundle install --with jsexec --without secryst
+      - name: Set up Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: js/package-lock.json
+      - name: Install NPM packages
+        working-directory: js
+        run: npm ci
+      - name: prepareMaps
+        working-directory: js
+        run: npm run prepareMaps
+      - name: Test
+        working-directory: js
+        run: npm test
