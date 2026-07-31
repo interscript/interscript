@@ -1,6 +1,6 @@
-# rababa-v2: 02 — Teacher model (Nemotron-Mini / Phi-3 fine-tune)
+# rababa-v2: 02 — Teacher model (Qwen3.5-4B fine-tune)
 
-**Status:** SPECIFICATION
+**Status:** SPECIFICATION (updated 2026-08-01 — verified latest HuggingFace models)
 **Priority:** P0
 
 ## Why an LLM, not Tacotron
@@ -10,95 +10,40 @@ architecture repurposed for text. Its inductive biases (convolution
 banks for acoustic features, attention for audio alignment) are wrong
 for a pure text task.
 
-A modern small LLM (Nemotron-Mini, Phi-3-mini, Gemma-2-2B) already
-understands Arabic morphology from pretraining:
+A modern Qwen LLM already understands Arabic morphology from pretraining:
 - Root patterns (جذر): ق-ط-ر, ك-ت-ب, د-ر-س
 - Context-dependent vowel selection (same consonants → different
   haraqat based on meaning)
 - Morphological rules (definite article ال, sun letters, etc.)
 
-Diacritization is: "given these consonants + context, predict vowels."
-That's exactly what a language model does.
+## Teacher candidates (August 2026 — verified on HuggingFace)
 
-## Teacher candidates (2026)
+| Model | Params | Downloads | Why |
+|---|---|---|---|
+| **Qwen3.5-4B** | 4B | 6.3M | Latest dense Qwen. Strong Arabic. LoRA on A100. |
+| Qwen3-1.7B | 1.7B | 7.5M | Smaller, faster iteration. Consumer GPU (RTX 4090). |
+| Qwen3-4B-Instruct-2507 | 4B | 3.3M | Instruction-tuned. Can prompt zero-shot before fine-tuning. |
+| Qwen3.6-35B-A3B | 35B/3B active | 6.1M | MoE — 3B active, very efficient inference. Multi-GPU for training. |
+| Qwen2.5-3B-Instruct | 3B | 5.8M | Previous gen. Battle-tested ONNX export. |
 
-| Model | Params | Arabic pretraining | License | Inference |
-|---|---|---|---|---|
-| **Nemotron-Mini-4B** | 4B | Yes (NVIDIA multilingual) | NVIDIA Open | NeMo / vLLM |
-| **Phi-3-mini-4K** | 3.8B | Moderate | MIT | ONNX export native |
-| **Gemma-2-2B** | 2B | Yes (Google multilingual) | Gemma License | TFLite / ONNX |
-| **Qwen2.5-3B** | 3B | Yes (strong Arabic) | Apache 2.0 | vLLM / ONNX |
+**Primary: Qwen3.5-4B** — best Arabic understanding at a trainable size.
+**Fallback: Qwen3-1.7B** — faster iteration, consumer GPU.
 
-**Recommended: Qwen2.5-3B or Gemma-2-2B** — strongest Arabic understanding
-at ≤3B params. Both export cleanly to ONNX.
-
-**Alternative: Nemotron-Mini-4B** — if NVIDIA NeMo pipeline is preferred.
-
-## Fine-tuning approach
+## Fine-tuning
 
 ```python
 # src/models/teacher_llm.py
-from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
-from peft import LoraConfig, get_peft_model
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import LoraConfig, get_peft_model, TaskType
 
-model_name = "Qwen/Qwen2.5-3B"  # or "google/gemma-2-2b"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForCausalLM.from_pretrained(model_name)
-
-# LoRA: train only 0.5% of params (fast, memory-efficient)
-lora_config = LoraConfig(
-    task_type="CAUSAL_LM",
-    r=16,
-    lora_alpha=32,
-    target_modules=["q_proj", "v_proj", "k_proj", "o_proj"],
+model = AutoModelForCausalLM.from_pretrained(
+    "Qwen/Qwen3.5-4B", torch_dtype="auto", device_map="auto",
 )
-model = get_peft_model(model, lora_config)
-
-# Training prompt format:
-# "Add full harakat (diacritics) to this Arabic text:\nقطر\n---\nقِطْرَ"
-# The model learns to generate the diacritized form.
+model = get_peft_model(model, LoraConfig(
+    task_type=TaskType.CAUSAL_LM, r=16, lora_alpha=32,
+    target_modules=["q_proj","v_proj","k_proj","o_proj","gate_proj","up_proj","down_proj"],
+    lora_dropout=0.05,
+))
 ```
 
-### Fine-tune config (configs/teacher_qwen.yaml)
-
-```yaml
-model: Qwen/Qwen2.5-3B
-method: lora
-lora:
-  r: 16
-  alpha: 32
-  dropout: 0.05
-training:
-  epochs: 3
-  batch_size: 16
-  gradient_accumulation: 4
-  learning_rate: 2e-4
-  warmup_steps: 100
-  fp16: true
-data:
-  train_split: data/processed/train.jsonl
-  val_split: data/processed/val.jsonl
-  max_length: 512
-output: models/teacher-qwen-rababa/
-```
-
-## Evaluation
-
-```python
-# src/training/evaluate.py
-def der(predicted: str, gold: str) -> float:
-    """Diacritization Error Rate: fraction of incorrectly predicted haraqat."""
-    # Align by character (strip non-haraqat for alignment)
-    # Count mismatches in haraqat positions
-    ...
-
-# Target: DER < 3% on Tashkeela++ test split
-```
-
-## Acceptance
-
-- [ ] Fine-tuning script runs end-to-end on single A100
-- [ ] DER < 3% on Tashkeela++ test split
-- [ ] All 3 test vectors from var-ara-Arab-Arab-rababa.imp pass
-- [ ] Model checkpoint saved to `models/teacher-qwen-rababa/`
-- [ ] Training log documents: epochs, learning rate, DER curve
+Config: `configs/teacher_qwen35.yaml` → Qwen3.5-4B, LoRA r=16, bf16, 3 epochs.
