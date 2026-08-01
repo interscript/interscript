@@ -4,13 +4,42 @@
 including ML-powered ones (rababa, secryst). Train modern LLM-based
 models to replace the legacy Tacotron/vanilla-transformer.
 
+## Where the code lives
+
+**Implementation:** https://github.com/interscript/ml-models
+
+This monorepo (`TODO.rababa/`, `TODO.secryst/`) holds the **specs and
+schedule**. The framework + task packages live in the separate
+`interscript/ml-models` repo (sibling layout under
+`/Users/mulgogi/src/interscript/ml-models/`). Distribution plan is in
+`TODO.distribution/` in that repo.
+
 ## Architecture decision
 
-Replace Tacotron CBHG (a speech model repurposed for text) with:
-1. **Teacher**: Qwen3.5-4B fine-tuned via LoRA on task-specific data
-2. **Student**: 6M-param character-level transformer distilled from teacher
+**Direct supervised training of a ~30M param character-level transformer
+on the gold corpus.** No LLM teacher.
 
-The student ships in the browser (~6 MB ONNX, <30ms/word).
+For diacritization, the corpus is authoritative. Tashkeela++ is
+~2M verses of scholar-annotated Arabic with full harakat. An LLM
+teacher fine-tuned on the same corpus can't add information the
+corpus doesn't already have — it only adds noise + cost.
+
+Two tiers:
+- **Tier 1 (default)**: ~30M char transformer, self-pretrained on
+  unlabeled Arabic then fine-tuned on Tashkeela++. ~$10-15/task.
+  DER 4-6%. Browser at q8 (~8MB).
+- **Tier 2 (optional quality)**: distill from a fine-tuned ByT5-base
+  teacher (also trained on Tashkeela++) into the same 30M student.
+  ~$25-35/task. DER 3-4%.
+
+The teacher in Tier 2 is *also* a student of Tashkeela++, not an LLM
+with prior opinions. Distillation here is a *compression* strategy,
+not a *labeling* strategy.
+
+See `ml-models/docs/architecture.md` for the full ADR.
+
+A CPU-only `StudentTrainer` exists for dev / CI / mobile variants —
+it trains the student directly on gold labels on a laptop.
 
 ## Unified repository
 
@@ -38,10 +67,10 @@ Each task = one config + one data module. Shared framework. OCP.
 | Unified transliterateAsync | #86 | ✅ DONE | |
 | Unified MLModel interface | #13 | SPEC | 0.5 day |
 | **P0: Training** | | | |
-| Unified training repo | #10 | SPEC | 1 day |
+| Unified training repo | #10 | ✅ DONE | 1 day |
 | Data pipeline (Arabic) | rababa/01 | SPEC | 2 days |
-| Teacher fine-tune (Arabic) | rababa/02 | SPEC | 1 day (GPU) |
-| Student distillation | rababa/03 | SPEC | 2 days (GPU) |
+| Self-pretrain (Arabic) | rababa/02b | SPEC | 0.5 day (GPU) |
+| Direct supervised fine-tune | rababa/03 | SPEC | 1 day (GPU) |
 | ONNX export | rababa/04 | SPEC | 0.5 day |
 | Evaluation suite | rababa/05 | SPEC | 1 day |
 | Thai→IPA data + training | secryst/01-05 | SPEC | 1 week |
