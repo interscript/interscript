@@ -1,0 +1,29 @@
+name: release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  rubygems:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ruby bootstrap.rb
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: ruby
+      - run: bundle install --jobs 4 --retry 3
+        working-directory: ruby
+      - run: bundle exec rake
+        working-directory: ruby
+      - run: gem build interscript.gemspec
+        working-directory: ruby
+      - run: gem push interscript-*.gem
+        working-directory: ruby
