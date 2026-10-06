@@ -23,6 +23,9 @@ jobs:
         working-directory: ruby
       - run: bundle exec rake
         working-directory: ruby
+        env:
+          SKIP_JS: "1"
+          SKIP_PYTHON: "1"
       - run: gem build interscript.gemspec
         working-directory: ruby
       - run: gem push interscript-*.gem
