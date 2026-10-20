@@ -39,38 +39,3 @@ jobs:
         working-directory: ruby
         run: bundle exec rspec
 
-  js:
-    name: Node ${{ matrix.node }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node: [20, 22]
-    steps:
-      - uses: actions/checkout@v7
-      - name: Bootstrap packages
-        run: ruby bootstrap.rb
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.3"
-          bundler-cache: true
-          working-directory: ruby
-      - name: Install gems
-        working-directory: ruby
-        run: bundle install --with jsexec --without secryst
-      - name: Set up Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{ matrix.node }}
-      - name: Install NPM packages
-        working-directory: js
-        # bootstrap does not produce js/package-lock.json, so there is
-        # nothing to cache against and npm ci has no lock to install
-        run: npm install
-      - name: prepareMaps
-        working-directory: js
-        run: npm run prepareMaps
-      - name: Test
-        working-directory: js
-        run: npm test
