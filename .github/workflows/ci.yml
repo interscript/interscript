@@ -16,6 +16,10 @@ jobs:
     env:
       BUNDLE_WITHOUT: "secryst"
       SKIP_JS: "1"
+      # cross-compiler execution specs need a pip-installed python
+      # interscript module; that coverage is owned by the per-runtime
+      # repos' CI (same split as SKIP_JS)
+      SKIP_PYTHON: "1"
     steps:
       - uses: actions/checkout@v7
       - name: Bootstrap packages
@@ -59,11 +63,11 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
-          cache: npm
-          cache-dependency-path: js/package-lock.json
       - name: Install NPM packages
         working-directory: js
-        run: npm ci
+        # bootstrap does not produce js/package-lock.json, so there is
+        # nothing to cache against and npm ci has no lock to install
+        run: npm install
       - name: prepareMaps
         working-directory: js
         run: npm run prepareMaps
