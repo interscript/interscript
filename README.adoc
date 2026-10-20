@@ -14,7 +14,6 @@ This repository contains interoperable transliteration schemes from:
 * UN (by UNGEGN)
 * Many, many other script conversion system authorities.
 
-The goal is to achieve interoperable transliteration schemes allowing quality comparisons.
 
 
 
@@ -72,23 +71,16 @@ image:https://raw.githubusercontent.com/interscript/interscript-ruby/main/docs/d
 
 === Prerequisites
 
-Interscript depends on Ruby. Once you manage to install Ruby, it's easy. This part
-won't work until we release Interscript v2, please use the one below.
+Interscript depends on Ruby. Once you manage to install Ruby, it's easy:
 
 [source,sh]
 ----
-gem install interscript -v "~>2.0"
+gem install interscript
 ----
 
-You can also download a local copy of this Git repository, eg. for development
-purposes:
-
-[source,sh]
-----
-git clone https://github.com/interscript/lcs
-cd lcs/ruby
-bundle install
-----
+For development, clone the runtime repository you are working on (e.g.
+https://github.com/interscript/interscript-ruby[interscript-ruby]) and
+`bundle install` there.
 
 ==== Additional prerequisites for Thai systems
 
@@ -182,7 +174,7 @@ e.g. `bgnpcgn-rus-Cyrl-Latn-1947`:
 
 == Covered languages
 
-Currently the schemes cover Cyrillic, Armenian, Greek, Arabic and Hebrew.
+The corpus covers 293 systems across many scripts and authorities — browse the catalogue at https://www.interscript.org[interscript.org].
 
 
 == Samples to play with
@@ -191,6 +183,16 @@ Currently the schemes cover Cyrillic, Armenian, Greek, Arabic and Hebrew.
 
 * `rus-Cyrl-2.txt`: Copied from the XLS output from http://www.yaroslavl.vybory.izbirkom.ru/region/yaroslavl?action=show&root=764013001&tvd=4764013188704&vrn=4764013188693&prver=0&pronetvd=0&region=76&sub_region=76&type=426&vibid=4764013188704
 
+
+== Direction
+
+Per-language SOTA rows land through the config-driven training spine in
+https://github.com/interscript/interscript-models[interscript-models]
+(a language is two YAML files; gates are machine-checkable). The
+implementable contracts are the ISC map language and the IMF v1 model
+format with frozen conformance vectors. See the
+https://github.com/interscript/interscript-models#direction-audit-2026-10[project
+direction].
 
 == References
 
